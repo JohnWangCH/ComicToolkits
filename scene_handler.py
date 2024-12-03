@@ -1,5 +1,5 @@
 import os
-import re
+from utils import get_clean_sentences
 
 min_words = 20
 max_words = 40
@@ -22,21 +22,6 @@ def _combine_strings(strings):
     return combined
 
 
-def remove_punctuation(text):
-    # temp_text = re.sub(r'(\.|\?|!|,|;|:|")\1+', r"\1", text)
-    punctuations_to_replace = "，。！？；!,…"
-    # Avoids consecutive redundant punctuations
-    temp_text = re.sub(f"([{punctuations_to_replace}]){{2,}}", r"\1", text)
-    # Replace them with ','
-    temp_text = re.sub(f"[{punctuations_to_replace}]", ",", temp_text)
-
-    punctuations_to_remove = "：“”"
-    # Removes others punctuation
-    cleaned_text = re.sub(f"[{punctuations_to_remove}]", "", temp_text)
-
-    return cleaned_text
-
-
 def _split_2_line(text) -> list[str]:
     PUNCTUATION = ["，", "。", "！", "？", "；", "：", "”", "“", ",", "!", "…"]
 
@@ -51,7 +36,7 @@ def _split_2_line(text) -> list[str]:
                         i += 1
                 except IndexError:
                     pass
-                text_list.append(remove_punctuation(text[start:i].strip()))
+                text_list.append(get_clean_sentences(text[start:i].strip()))
                 start = i
             i += 1
         return text_list
@@ -62,15 +47,12 @@ def _split_2_line(text) -> list[str]:
 
 
 if __name__ == "__main__":
-
+    file_path = "E:\小說推文\我有一尊煉妖壺"
+    file_name = "chap_64106829_64132649"
     # 測試抓取章節的函數
-    content_file_path = os.path.join(
-        "E:\小說推文\我有一尊煉妖壺", "chap_64091898_64106829.txt"
-    )
+    content_file_path = os.path.join(file_path, f"{file_name}.txt")
 
-    scene_file_path = os.path.join(
-        "E:\小說推文\我有一尊煉妖壺", "chap_64091898_64106829_scene.txt"
-    )
+    scene_file_path = os.path.join(file_path, f"{file_name}_scene.txt")
 
     with open(content_file_path, "+r", encoding="utf_8_sig") as content_file:
         content = content_file.read()
